@@ -9,6 +9,7 @@ import { supabase, signOut } from '@/lib/supabase';
 export default function AppLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function AppLayout({ children }) {
         .single();
 
       setUser(member || { full_name: authUser.email, email: authUser.email });
+      setLoading(false);
     }
     loadUser();
   }, [router]);
@@ -33,6 +35,16 @@ export default function AppLayout({ children }) {
   async function handleLogout() {
     await signOut();
     router.push('/');
+  }
+
+  if (loading) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-base)' }}>
+        <div style={{ background: 'var(--bg-surface)', padding: 'var(--space-xl)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)' }}>
+          <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Caricamento applicazione...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
